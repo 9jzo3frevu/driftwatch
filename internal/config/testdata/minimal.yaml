@@ -1,0 +1,3 @@
+sources:
+  declared_file: infra.json
+  live_url: http://localhost:9000/config

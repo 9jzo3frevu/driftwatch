@@ -1,0 +1,11 @@
+sources:
+  declared_file: infra/production.yaml
+  live_url: https://api.example.com/v1/config
+  timeout: 15s
+report:
+  format: text
+  output: stdout
+detector:
+  ignore_keys:
+    - deployed_at
+    - instance_id
