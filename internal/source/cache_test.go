@@ -8,76 +8,66 @@ import (
 func TestCache_SetAndGet_Hit(t *testing.T) {
 	c := NewCache(5 * time.Minute)
 	data := map[string]string{"key": "value"}
-	c.Set("svc-a", data)
+	c.Set("svc", data)
 
-	got, ok := c.Get("svc-a")
+	got, ok := c.Get("svc")
 	if !ok {
-		t.Fatal("expected cache hit, got miss")
+		t.Fatal("expected cache hit")
 	}
 	if got["key"] != "value" {
-		t.Errorf("expected 'value', got %q", got["key"])
+		t.Errorf("expected value, got %q", got["key"])
 	}
 }
 
 func TestCache_Get_Miss(t *testing.T) {
 	c := NewCache(5 * time.Minute)
-
-	_, ok := c.Get("nonexistent")
+	_, ok := c.Get("missing")
 	if ok {
-		t.Fatal("expected cache miss, got hit")
+		t.Fatal("expected cache miss")
 	}
 }
 
 func TestCache_Get_Expired(t *testing.T) {
 	c := NewCache(1 * time.Millisecond)
-	c.Set("svc-b", map[string]string{"x": "1"})
-
+	c.Set("svc", map[string]string{"a": "b"})
 	time.Sleep(5 * time.Millisecond)
 
-	_, ok := c.Get("svc-b")
+	_, ok := c.Get("svc")
 	if ok {
-		t.Fatal("expected expired cache miss, got hit")
+		t.Fatal("expected expired entry to be a miss")
 	}
 }
 
 func TestCache_Invalidate(t *testing.T) {
 	c := NewCache(5 * time.Minute)
-	c.Set("svc-c", map[string]string{"a": "b"})
-	c.Invalidate("svc-c")
+	c.Set("svc", map[string]string{"x": "y"})
+	c.Invalidate("svc")
 
-	_, ok := c.Get("svc-c")
+	_, ok := c.Get("svc")
 	if ok {
-		t.Fatal("expected miss after invalidation")
+		t.Fatal("expected entry to be removed")
 	}
 }
 
 func TestCache_Flush(t *testing.T) {
 	c := NewCache(5 * time.Minute)
-	c.Set("svc-d", map[string]string{"p": "q"})
-	c.Set("svc-e", map[string]string{"r": "s"})
+	c.Set("a", map[string]string{})
+	c.Set("b", map[string]string{})
 	c.Flush()
 
-	for _, key := range []string{"svc-d", "svc-e"} {
-		if _, ok := c.Get(key); ok {
-			t.Errorf("expected miss for %q after flush", key)
-		}
+	if c.Len() != 0 {
+		t.Errorf("expected empty cache after flush, got %d entries", c.Len())
 	}
 }
 
-func TestCacheEntry_IsExpired(t *testing.T) {
-	entry := &CacheEntry{
-		FetchedAt: time.Now().Add(-10 * time.Second),
-		TTL:       5 * time.Second,
+func TestCache_Len(t *testing.T) {
+	c := NewCache(5 * time.Minute)
+	if c.Len() != 0 {
+		t.Fatal("expected empty cache")
 	}
-	if !entry.IsExpired() {
-		t.Error("expected entry to be expired")
-	}
-
-	fresh := &CacheEntry{
-		FetchedAt: time.Now(),
-		TTL:       5 * time.Minute,
-	}
-	if fresh.IsExpired() {
-		t.Error("expected fresh entry to not be expired")
+	c.Set("svc1", map[string]string{})
+	c.Set("svc2", map[string]string{})
+	if c.Len() != 2 {
+		t.Errorf("expected 2, got %d", c.Len())
 	}
 }
