@@ -58,3 +58,25 @@ func TestSummary_String(t *testing.T) {
 		t.Errorf("expected 'critical' in string, got: %s", str)
 	}
 }
+
+func TestSummarize_TotalAndCleanCounts(t *testing.T) {
+	cases := []struct {
+		total, drifted int
+	}{
+		{10, 3},
+		{7, 7},
+		{1, 0},
+	}
+	for _, tc := range cases {
+		s := Summarize(makeResults(tc.total, tc.drifted))
+		if s.Total != tc.total {
+			t.Errorf("expected Total=%d, got %d", tc.total, s.Total)
+		}
+		if s.Drifted != tc.drifted {
+			t.Errorf("expected Drifted=%d, got %d", tc.drifted, s.Drifted)
+		}
+		if s.Clean != tc.total-tc.drifted {
+			t.Errorf("expected Clean=%d, got %d", tc.total-tc.drifted, s.Clean)
+		}
+	}
+}
