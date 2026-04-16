@@ -1,0 +1,7 @@
+declared_file: declared.json
+live_url: http://localhost:8080/config
+suppressions:
+  - key: db.host
+    expires: 2h
+  - key: app.port
+    expires: 30m
