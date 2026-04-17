@@ -15,6 +15,20 @@ func writeTempFile(t *testing.T, dir, name, content string) string {
 	return p
 }
 
+// changeDir temporarily changes the working directory to dir for the duration
+// of the test, restoring it via t.Cleanup.
+func changeDir(t *testing.T, dir string) {
+	t.Helper()
+	origDir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("changeDir: getwd: %v", err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("changeDir: chdir: %v", err)
+	}
+	t.Cleanup(func() { os.Chdir(origDir) }) //nolint:errcheck
+}
+
 func TestRun_MissingConfig(t *testing.T) {
 	origArgs := os.Args
 	defer func() { os.Args = origArgs }()
@@ -50,9 +64,7 @@ func TestRun_DefaultConfigPath(t *testing.T) {
 	os.Args = []string{"driftwatch"}
 
 	// Change working dir to temp so default driftwatch.yaml is absent.
-	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir) //nolint:errcheck
-	os.Chdir(t.TempDir())   //nolint:errcheck
+	changeDir(t, t.TempDir())
 
 	err := run()
 	if err == nil {
