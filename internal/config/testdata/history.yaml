@@ -1,0 +1,4 @@
+history:
+  enabled: true
+  file_path: /var/lib/driftwatch/history.json
+  max_age: 72h
