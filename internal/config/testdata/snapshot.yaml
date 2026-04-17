@@ -1,0 +1,6 @@
+declared_file: declared.yaml
+live_url: http://localhost:9000/config
+
+snapshot:
+  enabled: true
+  dir: /var/driftwatch/snapshots
