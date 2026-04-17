@@ -64,3 +64,11 @@ func TestRemediator_NilLive(t *testing.T) {
 		t.Error("suggestion should not be empty")
 	}
 }
+
+func TestRemediator_EmptyResults(t *testing.T) {
+	r := NewRemediator("")
+	hints := r.Hints([]DriftResult{})
+	if len(hints) != 0 {
+		t.Errorf("expected no hints for empty results, got %d", len(hints))
+	}
+}
