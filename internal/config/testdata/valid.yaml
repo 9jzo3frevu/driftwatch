@@ -9,3 +9,6 @@ detector:
   ignore_keys:
     - deployed_at
     - instance_id
+    - last_updated
+    - build_id
+  threshold: 0
