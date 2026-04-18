@@ -1,0 +1,4 @@
+audit:
+  enabled: true
+  file_path: /var/log/driftwatch/audit.json
+  max_entries: 200
