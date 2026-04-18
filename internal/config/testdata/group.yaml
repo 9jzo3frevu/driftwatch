@@ -1,0 +1,6 @@
+declared: declared.json
+live_url: http://localhost:8080/config
+
+group:
+  enabled: true
+  by: severity
