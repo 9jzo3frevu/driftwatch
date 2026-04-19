@@ -1,0 +1,4 @@
+rank:
+  enabled: true
+  by: severity
+  descending: true
