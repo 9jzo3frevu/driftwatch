@@ -1,0 +1,7 @@
+redact:
+  enabled: true
+  patterns:
+    - password
+    - token
+    - secret
+  mask: "***"
