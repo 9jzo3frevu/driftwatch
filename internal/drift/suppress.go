@@ -40,3 +40,16 @@ func (s *Suppressor) Apply(results []DriftResult, now time.Time) []DriftResult {
 	}
 	return filtered
 }
+
+// PruneExpired removes all suppression rules that have already expired
+// as of the given time. This helps keep the rules list from growing
+// unbounded when rules are added dynamically over time.
+func (s *Suppressor) PruneExpired(now time.Time) {
+	active := s.rules[:0]
+	for _, r := range s.rules {
+		if now.Before(r.ExpiresAt) {
+			active = append(active, r)
+		}
+	}
+	s.rules = active
+}
