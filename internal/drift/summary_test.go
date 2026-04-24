@@ -80,3 +80,27 @@ func TestSummarize_TotalAndCleanCounts(t *testing.T) {
 		}
 	}
 }
+
+// TestSummarize_SeverityBoundaries verifies that severity levels are assigned
+// correctly at the exact boundary values between thresholds.
+func TestSummarize_SeverityBoundaries(t *testing.T) {
+	cases := []struct {
+		total, drifted int
+		want           Severity
+	}{
+		{100, 0, SeverityNone},
+		{100, 1, SeverityLow},
+		{100, 24, SeverityLow},
+		{100, 25, SeverityHigh},
+		{100, 49, SeverityHigh},
+		{100, 50, SeverityCritical},
+		{100, 100, SeverityCritical},
+	}
+	for _, tc := range cases {
+		s := Summarize(makeResults(tc.total, tc.drifted))
+		if s.Severity != tc.want {
+			t.Errorf("drifted=%d/%d: expected severity %s, got %s",
+				tc.drifted, tc.total, tc.want, s.Severity)
+		}
+	}
+}
