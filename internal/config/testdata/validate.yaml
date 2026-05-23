@@ -1,0 +1,8 @@
+validate:
+  rules:
+    - prefix: "db.port"
+      pattern: "^\\d+$"
+      message: "port must be numeric"
+    - prefix: "app.version"
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+      message: "must be semver"
