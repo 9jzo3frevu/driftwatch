@@ -1,0 +1,5 @@
+prune:
+  enabled: true
+  max_age: 12h
+  max_results: 200
+  only_drifted: true
